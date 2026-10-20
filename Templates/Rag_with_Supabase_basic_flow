@@ -1,0 +1,287 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "for vector databse",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "upload file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [-848, -304],
+      "id": "a1c7e932-5d84-4b16-9f23-7c0e6a8b2d41",
+      "name": "On form submission",
+      "webhookId": "f3b8d621-9a47-4c05-8e12-6d7a2f90c531"
+    },
+    {
+      "parameters": {
+        "modelName": "embed-multilingual-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [-592, -112],
+      "id": "b2d8f043-6e95-4c27-a034-8e1b7c9d3f52",
+      "name": "Embeddings Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "c4e9a154-7f26-4d38-b145-9f2c8a0e6d73",
+          "name": "REPLACE_WITH_YOUR_COHERE_CREDENTIAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "n8n",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [-592, -304],
+      "id": "d5f0b265-8a37-4e49-b256-0a3d9c1f7e84",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "e6a1c376-9b48-4f50-c367-1b4e0d2a8f95",
+          "name": "REPLACE_WITH_YOUR_SUPABASE_CREDENTIAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [-432, -112],
+      "id": "f7b2d487-0c59-4061-d478-2c5f1e3b9a06",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [-112, -352],
+      "id": "a8c3e598-1d60-4172-e589-3d602f4cab17",
+      "name": "When chat message received",
+      "webhookId": "b9d4f6a1-2e71-4283-f690-4e713a5dbc28"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Search the knowledge base for any question about the uploaded study material / SE notes. Use this for every user question."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [112, -352],
+      "id": "cad507b2-3f82-4394-a701-5f824b6dec39",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrieve knowledge about SE Unit 1 from the Supabase vector store.",
+        "tableName": {
+          "__rl": true,
+          "value": "n8n",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [496, -144],
+      "id": "dbe2a30d-9cde-4fd4-b69e-dc3a0dd747a1",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "e6a1c376-9b48-4f50-c367-1b4e0d2a8f95",
+          "name": "REPLACE_WITH_YOUR_SUPABASE_CREDENTIAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "embed-multilingual-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [608, 16],
+      "id": "ecf3b41e-6a72-4c85-9074-6b1d2e8f5a30",
+      "name": "Embeddings Cohere1",
+      "credentials": {
+        "cohereApi": {
+          "id": "c4e9a154-7f26-4d38-b145-9f2c8a0e6d73",
+          "name": "REPLACE_WITH_YOUR_COHERE_CREDENTIAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [32, -128],
+      "id": "fd04c52f-7b83-4d96-a185-7c2e3f9a6041",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "a015d6e7-8c94-4ea2-b296-8d3f0a1c7e52",
+          "name": "REPLACE_WITH_YOUR_OPENAI_CREDENTIAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "numberOfItems": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserItemList",
+      "typeVersion": 1,
+      "position": [304, -176],
+      "id": "b126e7f8-9d05-4fb3-c2a7-9e4f1b0d8c63",
+      "name": "Item List Output Parser"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [192, 0],
+      "id": "c237f809-ae16-40c4-d3b8-0f5a2c1e9d74",
+      "name": "Simple Memory"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item List Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+          "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
