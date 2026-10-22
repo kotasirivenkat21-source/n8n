@@ -1,0 +1,139 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-240, -32],
+      "id": "d669a393-9e5d-40b3-9f8f-a7be62ff7592",
+      "name": "When clicking Execute workflow"
+    },
+    {
+      "parameters": {
+        "url": "https://graph.instagram.com/me",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "FAKE_TOKEN_12345678901234567890"
+            },
+            {
+              "name": "fields",
+              "value": "id,username,account_type"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [-16, -32],
+      "id": "f65dce72-4c1d-47c3-a24f-d6062553df10",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v23.0/11112222333344445/media",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer FAKE_TOKEN_12345678901234567890"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "https://i.postimg.cc/NfjFjxdJ/naruto-uzumaki-mano-elevada-baryon-mode-8737-webp.jpg"
+            },
+            {
+              "name": "caption",
+              "value": "test post caption"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [192, -32],
+      "id": "154a433d-a8f2-444d-8416-3a7f913157c5",
+      "name": "staged media"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.instagram.com/v23.0/11112222333344445/media_publish",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer FAKE_TOKEN_12345678901234567890"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [400, -32],
+      "id": "f4b4dc65-8bb5-4790-b2b6-a8b0eb65b3f5",
+      "name": "post(actually)"
+    }
+  ],
+  "connections": {
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "staged media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "staged media": {
+      "main": [
+        [
+          {
+            "node": "post(actually)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}
