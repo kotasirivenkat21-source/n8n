@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "af7a12be-a922-4391-8c15-5ceba3635dc1",
+      "name": "Every Day 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [-192, -160]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-2.5-flash",
+          "cachedResultName": "Gemini 2.5 Flash",
+          "cachedResultUrl": ""
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Today is {{ $now.toFormat(\"yyyy-MM-dd\") }}. Create a daily Japanese study email body for a JLPT N5 learner. Include: (1) 5 new vocabulary words with kana, romaji and English meaning; (2) 5 new kanji with readings (on/kun), meaning and one example word; (3) 5 new simple example sentences with kana/kanji, romaji and English translation. Vary the content each day. Start with a short friendly reminder to complete today's Duolingo Japanese practice and keep the streak. Output ONLY valid HTML fragment (use h2, ul, li, p), no markdown fences, no html/body tags.\nalso every new word or sentence in the output in phone must see clealy"
+            }
+          ]
+        },
+        "builtInTools": {
+          "googleSearch": false,
+          "urlContext": false,
+          "codeExecution": false
+        },
+        "options": {
+          "includeMergedResponse": true,
+          "maxOutputTokens": 4000
+        }
+      },
+      "id": "1ae30c73-813b-4db8-85e1-5a18175acca9",
+      "name": "Generate Daily Lesson",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [16, -160],
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "YOUR_GEMINI_CREDENTIAL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL_ADDRESS",
+        "subject": "=Duolingo Japanese: your daily practice + lesson ({{ $now.toFormat(\"MMM d\") }})",
+        "emailType": "text",
+        "message": "={{ $json.content.parts[0].text }} \n{{ $json.finishReason }}\n{{ $json.mergedResponse }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "73dfba64-109f-4559-b7f1-70b0cbd931a0",
+      "name": "Send Daily Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [352, -160],
+      "webhookId": "REPLACE_WITH_YOUR_WEBHOOK_ID",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": null,
+          "name": "YOUR_GMAIL_CREDENTIAL"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every Day 8 AM": {
+      "main": [
+        [
+          {
+            "node": "Generate Daily Lesson",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Daily Lesson": {
+      "main": [
+        [
+          {
+            "node": "Send Daily Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "REPLACE_WITH_YOUR_INSTANCE_ID"
+  }
+}
