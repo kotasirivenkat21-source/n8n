@@ -1,0 +1,351 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "c55ddc99-e10f-4c9c-af47-3a4041eb8df6",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -560,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://track-your-progress-buddy.lovable.app",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "7e91a1c8-f712-499c-8808-8a62c38773cd",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -288,
+        272
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "statusCode",
+              "value": "={{ $json.statusCode || 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "a2",
+              "name": "IssueOccured",
+              "value": "={{ $json.statusCode >= 200 && $json.statusCode < 300 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b64e64bd-3b43-411c-9c69-53affd8a7abb",
+      "name": "Check API Status",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -64,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.IssueOccured }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c4fa3a48-9164-4aa7-a76b-f339967d6faa",
+      "name": "IF Node",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1vW5kzjXNONYbRz7"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "checked_at": "={{ $now.toISO() }}",
+            "status_code": "={{ $json.statusCode }}",
+            "result": "success"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "checked_at",
+              "displayName": "checked_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status_code",
+              "displayName": "status_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "result",
+              "displayName": "result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3eac9a16-6a72-4eb2-8e91-31ea1390eecc",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $(\"HTTP Request\").params.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "bc5b21a3-7ab7-49e1-b23e-b5cf2aec7b4b",
+      "name": "Retry Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        512,
+        416
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ !($json.statusCode >= 200 && $json.statusCode < 300) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ceb0b75e-bccc-4469-9300-fec0f24635e9",
+      "name": "Still Failing?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "YOUR_SENDER_EMAIL",
+        "toEmail": "YOUR_RECIPIENT_EMAIL",
+        "subject": "API monitor alert: API is still failing after retry",
+        "emailFormat": "text",
+        "text": "=The API check failed and the retry also failed.\n\nStatus code on retry: {{ $json.statusCode || \"no response\" }}\nChecked at: {{ $now.toISO() }}",
+        "options": {}
+      },
+      "id": "ddb7e80c-6ed0-410b-8198-afd0b00580ea",
+      "name": "Send Alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        336
+      ],
+      "webhookId": "c0cc22ce-0caf-4f77-85b5-e57a56c48803",
+      "credentials": {
+        "smtp": {
+          "id": "tbvZrvGpEefU9Kvo",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Check API Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check API Status": {
+      "main": [
+        [
+          {
+            "node": "IF Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Node": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Request": {
+      "main": [
+        [
+          {
+            "node": "Still Failing?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Still Failing?": {
+      "main": [
+        [
+          {
+            "node": "Send Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "nodeGroups": [
+    {
+      "id": "5d69d5d2-8509-42a0-8cd8-08f09fbb922f",
+      "nodeIds": [
+        "7e91a1c8-f712-499c-8808-8a62c38773cd",
+        "b64e64bd-3b43-411c-9c69-53affd8a7abb",
+        "c4fa3a48-9164-4aa7-a76b-f339967d6faa"
+      ],
+      "name": "Check API health",
+      "description": "Calls the monitored API on each scheduled run and decides whether the response is a healthy 2xx status"
+    },
+    {
+      "id": "438ca120-5794-461d-a252-38909412159f",
+      "nodeIds": [
+        "bc5b21a3-7ab7-49e1-b23e-b5cf2aec7b4b",
+        "ceb0b75e-bccc-4469-9300-fec0f24635e9",
+        "ddb7e80c-6ed0-410b-8198-afd0b00580ea"
+      ],
+      "name": "Retry and alert",
+      "description": "On a failed check, calls the API again and emails an alert if it is still failing"
+    }
+  ],
+  "meta": {
+    "instanceId": "e34b6798dd319b7b83906b05ee7f545ff6180411fec6e80b0c2023e0b4297072"
+  }
+}
