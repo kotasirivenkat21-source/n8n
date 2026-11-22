@@ -1,0 +1,1283 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ae09e541-a8be-4c69-a1bf-6a195687394b",
+      "name": "Start Market Analysis",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "p1",
+              "name": "gold_24k_inr_per_10g",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "p2",
+              "name": "gold_22k_inr_per_10g",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "p3",
+              "name": "silver_inr_per_kg",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "p4",
+              "name": "price_datetime",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "p5",
+              "name": "currency",
+              "type": "string",
+              "value": "INR"
+            },
+            {
+              "id": "p6",
+              "name": "notes",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dfc03bd3-2036-4d0d-86ab-471e10c932a7",
+      "name": "Enter Current Prices",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -992,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "gold_24k_source",
+              "type": "string",
+              "value": "={{ String($json.gold_24k_inr_per_10g ?? \"\").trim() ? \"MANUAL INPUT\" : \"MISSING - use online search backup\" }}"
+            },
+            {
+              "id": "c2",
+              "name": "gold_22k_source",
+              "type": "string",
+              "value": "={{ String($json.gold_22k_inr_per_10g ?? \"\").trim() ? \"MANUAL INPUT\" : \"MISSING - use online search backup\" }}"
+            },
+            {
+              "id": "c3",
+              "name": "silver_source",
+              "type": "string",
+              "value": "={{ String($json.silver_inr_per_kg ?? \"\").trim() ? \"MANUAL INPUT\" : \"MISSING - use online search backup\" }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ff074111-5188-4657-8590-b0bbd9a50e00",
+      "name": "Check Price Inputs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -768,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "query": "gold rate today India 24 carat 22 carat price per 10 gram",
+        "additionalParameters": {
+          "country": "IN",
+          "search_lang": "en",
+          "freshness": "pd",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "64b885bd-4847-4a2b-afe8-cdbc7df0d250",
+      "name": "Search Indian Gold Prices",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "silver rate today India price per kg",
+        "additionalParameters": {
+          "country": "IN",
+          "search_lang": "en",
+          "freshness": "pd",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "27cc23b5-7ca2-4ae0-8561-d0e623c56b0e",
+      "name": "Search Indian Silver Prices",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "gold price news spot gold market outlook",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "b41bd138-7e3a-460e-a3e7-a92467ab4adc",
+      "name": "Search Global Gold News",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "silver price news spot silver market outlook",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "5aed3eed-6984-4620-bc4a-a6e9d2281e66",
+      "name": "Search Global Silver News",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "US Federal Reserve interest rate decision outlook",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "13e88faa-316c-4891-bb3a-4a58a0693b1c",
+      "name": "Search Fed Interest Rates",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "US dollar index DXY movement this week",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "02538786-ddba-4427-af9b-10ccd648643c",
+      "name": "Search US Dollar Moves",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "US inflation CPI latest economic indicators",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "6efd4c9d-b5df-4627-b9ba-cf2fce06287d",
+      "name": "Search Inflation Indicators",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "central bank gold purchases World Gold Council",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pm",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "605cb721-1923-46eb-ad32-3f1145be62cc",
+      "name": "Search Central Bank Gold Buying",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "geopolitical conflict global uncertainty safe haven demand",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "91aad57c-ddee-40e0-96a8-f3cc24aa896e",
+      "name": "Search Geopolitical Risk",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "silver industrial demand solar electronics",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pm",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "e9e558dc-9d38-4098-b567-bf84f34982d9",
+      "name": "Search Silver Industrial Demand",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "gold silver ETF investment demand inflows",
+        "additionalParameters": {
+          "country": "ALL",
+          "search_lang": "en",
+          "freshness": "pw",
+          "result_filter": [
+            "news",
+            "web"
+          ],
+          "extra_snippets": true
+        }
+      },
+      "id": "b11c1f89-4600-447d-b6e3-615839f3a79c",
+      "name": "Search Investment Demand",
+      "type": "@brave/n8n-nodes-brave-search.braveSearch",
+      "typeVersion": 1.1,
+      "position": [
+        1776,
+        1200
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "braveSearchApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const SEARCHES = {\n  indian_gold_prices: 'Search Indian Gold Prices',\n  indian_silver_prices: 'Search Indian Silver Prices',\n  gold_market: 'Search Global Gold News',\n  silver_market: 'Search Global Silver News',\n  fed_rates: 'Search Fed Interest Rates',\n  us_dollar: 'Search US Dollar Moves',\n  inflation: 'Search Inflation Indicators',\n  central_banks: 'Search Central Bank Gold Buying',\n  geopolitics: 'Search Geopolitical Risk',\n  silver_industrial: 'Search Silver Industrial Demand',\n  investment_demand: 'Search Investment Demand'\n};\nconst now = DateTime.now().setZone('Asia/Kolkata').toFormat('dd LLL yyyy, HH:mm') + ' IST';\nconst clean = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\\s+/g, ' ').trim();\nconst toResults = json => {\n  if (!json) return [];\n  if (json.web && Array.isArray(json.web.results)) {\n    const news = json.news && Array.isArray(json.news.results) ? json.news.results : [];\n    return news.concat(json.web.results);\n  }\n  if (Array.isArray(json.results)) return json.results;\n  if (json.url) return [json];\n  return [];\n};\nconst out = {};\nconst errors = [];\nfor (const key of Object.keys(SEARCHES)) {\n  let items = [];\n  try { items = $(SEARCHES[key]).all(); } catch (e) { errors.push(SEARCHES[key] + ': ' + e.message); }\n  const rows = [];\n  for (const it of items) {\n    for (const r of toResults(it.json)) {\n      rows.push({\n        title: clean(r.title),\n        url: r.url || '',\n        published: clean(r.page_age || r.age || 'date not shown'),\n        info: clean([r.description].concat(r.extra_snippets || []).join(' ')).slice(0, 500),\n        search_time: now,\n        topic: key\n      });\n    }\n  }\n  out[key] = rows.filter(r => r.url).slice(0, 10);\n}\nconst pick = keys => keys.reduce((a, k) => a.concat(out[k] || []), []);\nconst seen = new Set();\nconst sources = [];\nfor (const k of Object.keys(out)) {\n  for (const r of out[k]) {\n    if (!seen.has(r.url)) { seen.add(r.url); sources.push({ title: r.title, url: r.url, published: r.published, topic: r.topic }); }\n  }\n}\nreturn [{ json: {\n  search_time: now,\n  price_search_results: pick(['indian_gold_prices', 'indian_silver_prices']),\n  gold_news: pick(['gold_market', 'central_banks', 'investment_demand']),\n  silver_news: pick(['silver_market', 'silver_industrial', 'investment_demand']),\n  economic_news: pick(['fed_rates', 'us_dollar', 'inflation']),\n  geopolitical_news: pick(['geopolitics']),\n  research_sources: sources,\n  total_sources: sources.length,\n  search_errors: errors\n} }];"
+      },
+      "id": "7834e49e-89a7-4164-9ce3-458fb1dec0a3",
+      "name": "Normalize Search Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -768,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1",
+              "name": "research_time",
+              "type": "string",
+              "value": "={{ $json.search_time }}"
+            },
+            {
+              "id": "b2",
+              "name": "gold_24k_price",
+              "type": "string",
+              "value": "={{ (() => { const p = $(\"Check Price Inputs\").first().json; const v = String(p.gold_24k_inr_per_10g ?? \"\").trim(); return v ? p.currency + \" \" + v + \" per 10g | source: MANUAL INPUT | as of \" + (p.price_datetime || \"time not given\") : \"NOT PROVIDED MANUALLY | source: ONLINE SEARCH BACKUP - extract from Indian gold price search results with URL and date, or state not found\"; })() }}"
+            },
+            {
+              "id": "b3",
+              "name": "gold_22k_price",
+              "type": "string",
+              "value": "={{ (() => { const p = $(\"Check Price Inputs\").first().json; const v = String(p.gold_22k_inr_per_10g ?? \"\").trim(); return v ? p.currency + \" \" + v + \" per 10g | source: MANUAL INPUT | as of \" + (p.price_datetime || \"time not given\") : \"NOT PROVIDED MANUALLY | source: ONLINE SEARCH BACKUP - extract from Indian gold price search results with URL and date, or state not found\"; })() }}"
+            },
+            {
+              "id": "b4",
+              "name": "silver_price",
+              "type": "string",
+              "value": "={{ (() => { const p = $(\"Check Price Inputs\").first().json; const v = String(p.silver_inr_per_kg ?? \"\").trim(); return v ? p.currency + \" \" + v + \" per kg | source: MANUAL INPUT | as of \" + (p.price_datetime || \"time not given\") : \"NOT PROVIDED MANUALLY | source: ONLINE SEARCH BACKUP - extract from Indian silver price search results with URL and date, or state not found\"; })() }}"
+            },
+            {
+              "id": "b5",
+              "name": "price_sources",
+              "type": "string",
+              "value": "={{ \"Manual input notes: \" + ($(\"Check Price Inputs\").first().json.notes || \"none\") + \" | Online backup search results: \" + JSON.stringify($json.price_search_results).slice(0, 7000) }}"
+            },
+            {
+              "id": "b6",
+              "name": "gold_news",
+              "type": "string",
+              "value": "={{ JSON.stringify($json.gold_news).slice(0, 9000) }}"
+            },
+            {
+              "id": "b7",
+              "name": "silver_news",
+              "type": "string",
+              "value": "={{ JSON.stringify($json.silver_news).slice(0, 9000) }}"
+            },
+            {
+              "id": "b8",
+              "name": "economic_news",
+              "type": "string",
+              "value": "={{ JSON.stringify($json.economic_news).slice(0, 9000) }}"
+            },
+            {
+              "id": "b9",
+              "name": "geopolitical_news",
+              "type": "string",
+              "value": "={{ JSON.stringify($json.geopolitical_news).slice(0, 5000) }}"
+            },
+            {
+              "id": "b10",
+              "name": "research_sources",
+              "type": "string",
+              "value": "={{ $json.research_sources.map(s => s.title + \" | \" + s.url + \" | \" + s.published).join(\"\\n\").slice(0, 8000) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6c138e33-2126-407d-a694-8f2d0e9201c3",
+      "name": "Build Current Research Brief",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -544,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "miAvjA44uZvky2JX",
+          "cachedResultName": "historical_market_events"
+        },
+        "returnAll": true
+      },
+      "id": "5c40669e-126e-48fc-b890-c4af3a7a6422",
+      "name": "Load Historical Events",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        1648
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "rPzjzaR5xl1GuAPs",
+          "cachedResultName": "historical_metal_prices"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "metal",
+              "keyValue": "gold"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "17281800-54a8-4889-927a-20d2704f9afb",
+      "name": "Load 20Y Gold Prices",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        1648
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "rPzjzaR5xl1GuAPs",
+          "cachedResultName": "historical_metal_prices"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "metal",
+              "keyValue": "silver"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "ac9511b7-0813-4e2e-a21d-aaedf73dbd4d",
+      "name": "Load 20Y Silver Prices",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        1648
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const real = items => items.filter(i => Object.keys(i.json).length > 0).map(i => i.json);\nconst events = real($('Load Historical Events').all()).filter(e => e.event);\nconst gold = real($('Load 20Y Gold Prices').all()).filter(r => r.metal);\nconst silver = real($('Load 20Y Silver Prices').all()).filter(r => r.metal);\nconst fmt = e => e.period + ' | ' + e.event + ' | metals: ' + e.metals + ' | ' + e.movement + ' | ' + e.description + ' | source: ' + e.source;\nreturn [{ json: {\n  gold_price_history_status: gold.length ? 'AVAILABLE (' + gold.length + ' rows)' : 'PENDING - 20-year gold price series not loaded yet',\n  silver_price_history_status: silver.length ? 'AVAILABLE (' + silver.length + ' rows)' : 'PENDING - 20-year silver price series not loaded yet',\n  historical_events_status: events.length ? 'PARTIAL - ' + events.length + ' user-provided events (not independently verified)' : 'PENDING - no historical events stored',\n  historical_news_status: 'PENDING - historical news archive not connected yet',\n  price_spikes: events.filter(e => /spike|rise/.test(e.movement)).map(fmt),\n  price_drops: events.filter(e => /drop|weak/.test(e.movement)).map(fmt),\n  recovery_periods: events.filter(e => e.movement === 'recovery').map(fmt),\n  historical_events_text: events.length ? events.map(fmt).join('\\n') : 'None available',\n  price_history_available: gold.length > 0 && silver.length > 0\n} }];"
+      },
+      "id": "55cca66f-2325-46c8-a217-0b70c16dc4f7",
+      "name": "Assemble Historical Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "h1",
+              "name": "historical_comparison_status",
+              "type": "string",
+              "value": "={{ $json.price_history_available ? \"READY - price history loaded; enable the AI comparison stage\" : \"PENDING - 20-year price series not loaded. Only the user-provided event list is available; no statistical historical comparison was performed.\" }}"
+            },
+            {
+              "id": "h2",
+              "name": "future_comparison_tasks",
+              "type": "string",
+              "value": "1) Identify significant historical gold/silver price increases. 2) Identify significant drops. 3) Link news and economic conditions to those moves. 4) Identify recovery factors. 5) Compare current conditions with historical situations. 6) List similarities and differences. 7) Estimate whether today resembles historically bullish or bearish periods."
+            },
+            {
+              "id": "h3",
+              "name": "comparison_guardrail",
+              "type": "string",
+              "value": "Similar historical conditions do not guarantee similar future results."
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "f721d123-c249-4754-ba50-0efd9b3ffd0c",
+      "name": "Compare History vs Present",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "analyst_brief",
+              "type": "string",
+              "value": "=RESEARCH TIME: {{ $('Build Current Research Brief').first().json.research_time }}\n\n=== CURRENT PRICES (source labelled per price) ===\nGold 24K: {{ $('Build Current Research Brief').first().json.gold_24k_price }}\nGold 22K: {{ $('Build Current Research Brief').first().json.gold_22k_price }}\nSilver: {{ $('Build Current Research Brief').first().json.silver_price }}\n\n=== PRICE SOURCES ===\n{{ $('Build Current Research Brief').first().json.price_sources }}\n\n=== GOLD NEWS (international, central banks, investment demand) ===\n{{ $('Build Current Research Brief').first().json.gold_news }}\n\n=== SILVER NEWS (international, industrial demand, investment demand) ===\n{{ $('Build Current Research Brief').first().json.silver_news }}\n\n=== ECONOMIC NEWS (Fed rates, US dollar, inflation) ===\n{{ $('Build Current Research Brief').first().json.economic_news }}\n\n=== GEOPOLITICAL NEWS ===\n{{ $('Build Current Research Brief').first().json.geopolitical_news }}\n\n=== HISTORICAL MARKET INTELLIGENCE ===\nGold 20Y price history: {{ $json.gold_price_history_status }}\nSilver 20Y price history: {{ $json.silver_price_history_status }}\nHistorical events: {{ $json.historical_events_status }}\nHistorical news: {{ $json.historical_news_status }}\nHistorical comparison: {{ $json.historical_comparison_status }}\nGuardrail: {{ $json.comparison_guardrail }}\nEvent list (user-provided, not independently verified):\n{{ $json.historical_events_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e50e004b-9b25-463d-8cc8-3029ba82e20d",
+      "name": "Build Analyst Brief",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "agentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "w8dYYRDbMSML01bH",
+          "cachedResultName": "Gold Bull analyst"
+        },
+        "message": "=You are the GOLD BULL ANALYST. Build the strongest evidence-based case that GOLD and SILVER prices may RISE over 1, 3 and 5 years.\n\nAnalyse: current Indian gold and silver prices, international trends, inflation, Fed interest rates, US dollar moves, central bank gold buying, geopolitical risk, silver industrial demand, investment demand, and relevant historical events.\n\nRULES (mandatory):\n- Use ONLY the data in the brief. Never invent prices, statistics, dates, percentages or sources.\n- Search snippets are not verified facts: cite the source URL and its publication date, and say when a date is missing.\n- Every price must state whether it came from MANUAL INPUT or ONLINE SEARCH.\n- Historical events are user-provided and not independently verified; 20-year price series are PENDING. Do not invent historical findings.\n- Label each point [FACT] or [PREDICTION]. Never guarantee profits or prices.\n- Past patterns do not guarantee future results.\n\n{{ $json.analyst_brief }}\n\nOutput format:\nBULL ANALYSIS\n1. Current prices (with source type, URL and timestamp)\n2. Bullish drivers for gold\n3. Bullish drivers for silver\n4. Historical context (only from the brief; say PENDING where data is missing)\n5. Bullish outlook per horizon (gold and silver, 1y / 3y / 5y) with evidence strength: strong / moderate / weak / insufficient\n6. Risks to the bullish view\n7. Sources used (URL + date)",
+        "advanced": {
+          "session": {
+            "session": {
+              "sessionIdType": "customKey",
+              "sessionKey": "=metals-bull-{{ $execution.id }}"
+            }
+          }
+        }
+      },
+      "id": "dd5b5a0f-4b05-412c-81c4-24b2a0bb2981",
+      "name": "Gold Bull Analyst",
+      "type": "n8n-nodes-base.messageAnAgent",
+      "typeVersion": 3.1,
+      "position": [
+        1712,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "agentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gndkMFtGNhmfh0Yg",
+          "cachedResultName": "Gold Bear Analyst"
+        },
+        "message": "=You are the GOLD BEAR ANALYST. Build the strongest evidence-based case that GOLD and SILVER prices may FALL or stagnate over 1, 3 and 5 years.\n\nAnalyse: current Indian gold and silver prices, international trends, US dollar strength, higher-for-longer interest rates, profit booking, weaker demand, silver industrial slowdown risk, market corrections, economic stability, and relevant historical drops.\n\nRULES (mandatory):\n- Use ONLY the data in the brief. Never invent prices, statistics, dates, percentages or sources.\n- Search snippets are not verified facts: cite the source URL and its publication date, and say when a date is missing.\n- Every price must state whether it came from MANUAL INPUT or ONLINE SEARCH.\n- Historical events are user-provided and not independently verified; 20-year price series are PENDING. Do not invent historical findings.\n- Label each point [FACT] or [PREDICTION]. Never guarantee profits or prices.\n- Past patterns do not guarantee future results.\n\n{{ $json.analyst_brief }}\n\nOutput format:\nBEAR ANALYSIS\n1. Current prices (with source type, URL and timestamp)\n2. Bearish drivers for gold\n3. Bearish drivers for silver\n4. Historical context (only from the brief; say PENDING where data is missing)\n5. Bearish outlook per horizon (gold and silver, 1y / 3y / 5y) with evidence strength: strong / moderate / weak / insufficient\n6. Risks to the bearish view\n7. Sources used (URL + date)",
+        "advanced": {
+          "session": {
+            "session": {
+              "sessionIdType": "customKey",
+              "sessionKey": "=metals-bear-{{ $execution.id }}"
+            }
+          }
+        }
+      },
+      "id": "5fd5ff97-c6cd-42f5-89fa-ef47a8b1a606",
+      "name": "Gold Bear Analyst",
+      "type": "n8n-nodes-base.messageAnAgent",
+      "typeVersion": 3.1,
+      "position": [
+        1712,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "e4aeb333-1fcd-4697-9fea-4ff3b059b439",
+      "name": "Collect Both Analyses",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "agentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "wF80IcmTQiKFRIXu",
+          "cachedResultName": "Gold Judge 👑"
+        },
+        "message": "=You are the GOLD JUDGE, an independent decision-maker for GOLD and SILVER. Evaluate both analyst reports against the raw brief. Do not automatically side with either analyst; flag unsupported claims.\n\nRULES (mandatory):\n- Use ONLY the data in the brief. Never invent prices, statistics, dates, percentages or sources.\n- Search snippets are not verified facts: cite the source URL and its publication date, and say when a date is missing.\n- Every price must state whether it came from MANUAL INPUT or ONLINE SEARCH.\n- Historical events are user-provided and not independently verified; 20-year price series are PENDING. Do not invent historical findings.\n- Label each point [FACT] or [PREDICTION]. Never guarantee profits or prices.\n- Past patterns do not guarantee future results.\n\nPREDICTION RULES:\n- Give exactly 6 predictions: gold and silver, each for 1 year, 3 years and 5 years.\n- bullish_pct + bearish_pct + sideways_pct must equal 100.\n- These are evidence-based estimates, not guarantees. If evidence is insufficient for a horizon, set the percentages and confidence to null, evidence_strength to \"insufficient\", and recommendation to WAIT.\n- Longer horizons usually carry less certainty; reflect that in confidence.\n- recommendation is exactly BUY, WAIT or AVOID.\n- report_markdown must contain: current Indian gold 24K/22K and silver prices (source type + timestamp), international situation, bull summary, bear summary, comparison of analysts, historical comparison status, key risks, the prediction table, final recommendations, and sources. End with: \"Informational only, not financial advice. Future prices are not guaranteed.\"\n\n=== RAW BRIEF ===\n{{ $('Build Analyst Brief').first().json.analyst_brief }}\n\n=== BULL ANALYSIS ===\n{{ $('Gold Bull Analyst').first().json.text }}\n\n=== BEAR ANALYSIS ===\n{{ $('Gold Bear Analyst').first().json.text }}",
+        "useStructuredOutput": true,
+        "schemaType": "manual",
+        "outputSchema": "{\"type\":\"object\",\"properties\":{\"current_prices\":{\"type\":\"string\"},\"international_situation\":{\"type\":\"string\"},\"bull_summary\":{\"type\":\"string\"},\"bear_summary\":{\"type\":\"string\"},\"analyst_comparison\":{\"type\":\"string\"},\"historical_comparison\":{\"type\":\"string\"},\"key_risks\":{\"type\":\"string\"},\"predictions\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"metal\":{\"type\":\"string\",\"enum\":[\"gold\",\"silver\"]},\"horizon\":{\"type\":\"string\",\"enum\":[\"1 year\",\"3 years\",\"5 years\"]},\"bullish_pct\":{\"type\":[\"number\",\"null\"]},\"bearish_pct\":{\"type\":[\"number\",\"null\"]},\"sideways_pct\":{\"type\":[\"number\",\"null\"]},\"buy_suitability_pct\":{\"type\":[\"number\",\"null\"]},\"recommendation\":{\"type\":\"string\",\"enum\":[\"BUY\",\"WAIT\",\"AVOID\"]},\"confidence_pct\":{\"type\":[\"number\",\"null\"]},\"evidence_strength\":{\"type\":\"string\",\"enum\":[\"strong\",\"moderate\",\"weak\",\"insufficient\"]},\"justification\":{\"type\":\"string\"}},\"required\":[\"metal\",\"horizon\",\"bullish_pct\",\"bearish_pct\",\"sideways_pct\",\"buy_suitability_pct\",\"recommendation\",\"confidence_pct\",\"evidence_strength\",\"justification\"]}},\"sources\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\"},\"url\":{\"type\":\"string\"},\"date\":{\"type\":\"string\"}},\"required\":[\"title\",\"url\",\"date\"]}},\"report_markdown\":{\"type\":\"string\"}},\"required\":[\"current_prices\",\"international_situation\",\"bull_summary\",\"bear_summary\",\"analyst_comparison\",\"historical_comparison\",\"key_risks\",\"predictions\",\"sources\",\"report_markdown\"]}",
+        "advanced": {
+          "session": {
+            "session": {
+              "sessionIdType": "customKey",
+              "sessionKey": "=metals-judge-{{ $execution.id }}"
+            }
+          }
+        }
+      },
+      "id": "16a9028b-0f01-4024-b60e-106e1e8f9cc4",
+      "name": "Gold Judge",
+      "type": "n8n-nodes-base.messageAnAgent",
+      "typeVersion": 3.1,
+      "position": [
+        -960,
+        2176
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nlet r = j.structuredOutput;\nif (!r || typeof r !== 'object') {\n  try { const m = String(j.text || '').match(/\\{[\\s\\S]*\\}/); r = m ? JSON.parse(m[0]) : null; } catch (e) { r = null; }\n}\nif (!r) {\n  return [{ json: { validation_status: 'FAILED - Judge did not return structured predictions', prediction_table: 'Not available', validation_warnings: ['No structured output from Judge'], report_markdown: j.text || '', sources: [] } }];\n}\nconst warnings = [];\nconst preds = Array.isArray(r.predictions) ? r.predictions : [];\nconst expected = ['gold|1 year', 'gold|3 years', 'gold|5 years', 'silver|1 year', 'silver|3 years', 'silver|5 years'];\nconst have = preds.map(p => p.metal + '|' + p.horizon);\nfor (const e of expected) if (!have.includes(e)) warnings.push('Missing prediction: ' + e.replace('|', ' '));\nconst isNum = v => typeof v === 'number' && !isNaN(v);\nfor (const p of preds) {\n  const label = p.metal + ' ' + p.horizon;\n  const vals = [p.bullish_pct, p.bearish_pct, p.sideways_pct];\n  if (vals.every(isNum)) {\n    const sum = vals.reduce((a, b) => a + b, 0);\n    if (Math.abs(sum - 100) > 2) warnings.push(label + ': probabilities sum to ' + sum + '%, not 100%');\n  } else {\n    warnings.push(label + ': insufficient evidence - probabilities not estimated');\n  }\n  if (!['BUY', 'WAIT', 'AVOID'].includes(p.recommendation)) warnings.push(label + ': invalid recommendation ' + p.recommendation);\n}\nconst pct = v => isNum(v) ? v + '%' : 'Insufficient evidence';\nconst header = '| Metal | Horizon | Bullish | Bearish | Sideways | BUY suitability | Recommendation | Confidence | Evidence |\\n|---|---|---|---|---|---|---|---|---|';\nconst rows = preds.map(p => '| ' + p.metal + ' | ' + p.horizon + ' | ' + pct(p.bullish_pct) + ' | ' + pct(p.bearish_pct) + ' | ' + pct(p.sideways_pct) + ' | ' + pct(p.buy_suitability_pct) + ' | ' + p.recommendation + ' | ' + pct(p.confidence_pct) + ' | ' + p.evidence_strength + ' |');\nreturn [{ json: {\n  validation_status: warnings.some(w => !/insufficient evidence/.test(w)) ? 'CHECK WARNINGS' : 'OK',\n  validation_warnings: warnings,\n  prediction_table: [header].concat(rows).join('\\n'),\n  predictions: preds,\n  current_prices: r.current_prices,\n  international_situation: r.international_situation,\n  bull_summary: r.bull_summary,\n  bear_summary: r.bear_summary,\n  analyst_comparison: r.analyst_comparison,\n  historical_comparison: r.historical_comparison,\n  key_risks: r.key_risks,\n  sources: r.sources || [],\n  report_markdown: r.report_markdown || ''\n} }];"
+      },
+      "id": "a7be8dc6-08a3-447b-9f3a-b829d9963e21",
+      "name": "Validate Predictions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        2192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "generated_at",
+              "type": "string",
+              "value": "={{ $(\"Build Current Research Brief\").first().json.research_time }}"
+            },
+            {
+              "id": "f2",
+              "name": "gold_24k_price",
+              "type": "string",
+              "value": "={{ $(\"Build Current Research Brief\").first().json.gold_24k_price }}"
+            },
+            {
+              "id": "f3",
+              "name": "gold_22k_price",
+              "type": "string",
+              "value": "={{ $(\"Build Current Research Brief\").first().json.gold_22k_price }}"
+            },
+            {
+              "id": "f4",
+              "name": "silver_price",
+              "type": "string",
+              "value": "={{ $(\"Build Current Research Brief\").first().json.silver_price }}"
+            },
+            {
+              "id": "f5",
+              "name": "prediction_table",
+              "type": "string",
+              "value": "={{ $json.prediction_table }}"
+            },
+            {
+              "id": "f6",
+              "name": "validation_status",
+              "type": "string",
+              "value": "={{ $json.validation_status }}"
+            },
+            {
+              "id": "f7",
+              "name": "validation_warnings",
+              "type": "array",
+              "value": "={{ $json.validation_warnings }}"
+            },
+            {
+              "id": "f8",
+              "name": "historical_status",
+              "type": "string",
+              "value": "={{ $(\"Compare History vs Present\").first().json.historical_comparison_status }}"
+            },
+            {
+              "id": "f9",
+              "name": "final_report",
+              "type": "string",
+              "value": "={{ $json.report_markdown }}"
+            },
+            {
+              "id": "f10",
+              "name": "sources",
+              "type": "array",
+              "value": "={{ $json.sources }}"
+            },
+            {
+              "id": "f11",
+              "name": "bull_analysis",
+              "type": "string",
+              "value": "={{ $(\"Gold Bull Analyst\").first().json.text }}"
+            },
+            {
+              "id": "f12",
+              "name": "bear_analysis",
+              "type": "string",
+              "value": "={{ $(\"Gold Bear Analyst\").first().json.text }}"
+            },
+            {
+              "id": "f13",
+              "name": "disclaimer",
+              "type": "string",
+              "value": "Probabilities are evidence-based estimates, not guarantees. Informational only, not financial advice."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b303bf31-5266-449d-8570-e930afa591d0",
+      "name": "Final Market Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        2192
+      ]
+    }
+  ],
+  "connections": {
+    "Start Market Analysis": {
+      "main": [
+        [
+          {
+            "node": "Enter Current Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enter Current Prices": {
+      "main": [
+        [
+          {
+            "node": "Check Price Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Price Inputs": {
+      "main": [
+        [
+          {
+            "node": "Search Indian Gold Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Indian Gold Prices": {
+      "main": [
+        [
+          {
+            "node": "Search Indian Silver Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Indian Silver Prices": {
+      "main": [
+        [
+          {
+            "node": "Search Global Gold News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Global Gold News": {
+      "main": [
+        [
+          {
+            "node": "Search Global Silver News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Global Silver News": {
+      "main": [
+        [
+          {
+            "node": "Search Fed Interest Rates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Fed Interest Rates": {
+      "main": [
+        [
+          {
+            "node": "Search US Dollar Moves",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search US Dollar Moves": {
+      "main": [
+        [
+          {
+            "node": "Search Inflation Indicators",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Inflation Indicators": {
+      "main": [
+        [
+          {
+            "node": "Search Central Bank Gold Buying",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Central Bank Gold Buying": {
+      "main": [
+        [
+          {
+            "node": "Search Geopolitical Risk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Geopolitical Risk": {
+      "main": [
+        [
+          {
+            "node": "Search Silver Industrial Demand",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Silver Industrial Demand": {
+      "main": [
+        [
+          {
+            "node": "Search Investment Demand",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Investment Demand": {
+      "main": [
+        [
+          {
+            "node": "Normalize Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Search Results": {
+      "main": [
+        [
+          {
+            "node": "Build Current Research Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Current Research Brief": {
+      "main": [
+        [
+          {
+            "node": "Load Historical Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Historical Events": {
+      "main": [
+        [
+          {
+            "node": "Load 20Y Gold Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load 20Y Gold Prices": {
+      "main": [
+        [
+          {
+            "node": "Load 20Y Silver Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load 20Y Silver Prices": {
+      "main": [
+        [
+          {
+            "node": "Assemble Historical Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Historical Context": {
+      "main": [
+        [
+          {
+            "node": "Compare History vs Present",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare History vs Present": {
+      "main": [
+        [
+          {
+            "node": "Build Analyst Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Analyst Brief": {
+      "main": [
+        [
+          {
+            "node": "Gold Bull Analyst",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gold Bear Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gold Bull Analyst": {
+      "main": [
+        [
+          {
+            "node": "Collect Both Analyses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gold Bear Analyst": {
+      "main": [
+        [
+          {
+            "node": "Collect Both Analyses",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Collect Both Analyses": {
+      "main": [
+        [
+          {
+            "node": "Gold Judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gold Judge": {
+      "main": [
+        [
+          {
+            "node": "Validate Predictions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Predictions": {
+      "main": [
+        [
+          {
+            "node": "Final Market Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "nodeGroups": [
+    {
+      "id": "2e85541a-b6eb-4114-9337-451416f06ab3",
+      "name": "Capture current prices",
+      "nodeIds": [
+        "dfc03bd3-2036-4d0d-86ab-471e10c932a7",
+        "ff074111-5188-4657-8590-b0bbd9a50e00"
+      ],
+      "description": "Phase 1: you type today's 24K, 22K and silver rates; each price is tagged as manual input or missing (search backup)"
+    },
+    {
+      "id": "6cb9880e-be1c-4d7f-ac79-e387edecf81a",
+      "name": "Research current markets",
+      "nodeIds": [
+        "64b885bd-4847-4a2b-afe8-cdbc7df0d250",
+        "27cc23b5-7ca2-4ae0-8561-d0e623c56b0e",
+        "b41bd138-7e3a-460e-a3e7-a92467ab4adc",
+        "5aed3eed-6984-4620-bc4a-a6e9d2281e66",
+        "13e88faa-316c-4891-bb3a-4a58a0693b1c",
+        "02538786-ddba-4427-af9b-10ccd648643c",
+        "6efd4c9d-b5df-4627-b9ba-cf2fce06287d",
+        "605cb721-1923-46eb-ad32-3f1145be62cc",
+        "91aad57c-ddee-40e0-96a8-f3cc24aa896e",
+        "e9e558dc-9d38-4098-b567-bf84f34982d9",
+        "b11c1f89-4600-447d-b6e3-615839f3a79c"
+      ],
+      "description": "Phase 2: 11 web searches on prices, Fed, dollar, inflation, central banks, geopolitics and demand"
+    },
+    {
+      "id": "8ec87c43-0afc-43b7-93f3-a6d06ff340fd",
+      "name": "Build research brief",
+      "nodeIds": [
+        "7834e49e-89a7-4164-9ce3-458fb1dec0a3",
+        "6c138e33-2126-407d-a694-8f2d0e9201c3"
+      ],
+      "description": "Phase 3: keeps title, URL, date and search time for every result and sorts them into gold, silver, economic and geopolitical news"
+    },
+    {
+      "id": "56e7de22-717e-49d3-9210-12a1240fbf41",
+      "name": "Historical market intelligence",
+      "nodeIds": [
+        "5c40669e-126e-48fc-b890-c4af3a7a6422",
+        "17281800-54a8-4889-927a-20d2704f9afb",
+        "ac9511b7-0813-4e2e-a21d-aaedf73dbd4d",
+        "55cca66f-2325-46c8-a217-0b70c16dc4f7"
+      ],
+      "description": "Phase 4: reads stored events and 20-year prices; anything not loaded yet is marked PENDING, never invented"
+    },
+    {
+      "id": "0d0267f0-f14c-439e-bf03-1c21e7a627bd",
+      "name": "Compare history with today",
+      "nodeIds": [
+        "f721d123-c249-4754-ba50-0efd9b3ffd0c"
+      ],
+      "description": "Phase 5 placeholder: reports PENDING until 20-year price data exists; lists the future comparison tasks"
+    },
+    {
+      "id": "fd814655-a308-4476-af0f-730f7112ac6e",
+      "name": "Run bull vs bear debate",
+      "nodeIds": [
+        "e50e004b-9b25-463d-8cc8-3029ba82e20d",
+        "dd5b5a0f-4b05-412c-81c4-24b2a0bb2981",
+        "5fd5ff97-c6cd-42f5-89fa-ef47a8b1a606",
+        "e4aeb333-1fcd-4697-9fea-4ff3b059b439"
+      ],
+      "description": "Both analysts get the identical brief and argue rise vs fall for gold and silver over 1, 3 and 5 years"
+    },
+    {
+      "id": "377de4d3-74f8-4312-aa8c-6ccebcb9fc92",
+      "name": "Deliver predictions and verdict",
+      "nodeIds": [
+        "16a9028b-0f01-4024-b60e-106e1e8f9cc4",
+        "a7be8dc6-08a3-447b-9f3a-b829d9963e21",
+        "b303bf31-5266-449d-8570-e930afa591d0"
+      ],
+      "description": "Judge sets probabilities and BUY/WAIT/AVOID per metal and horizon; checks sums and missing evidence"
+    }
+  ],
+  "meta": {
+    "instanceId": "008bcae9ea012876fc3b6255839b1d5b2e12203283565d200d1bf532c5f46c79"
+  }
+}
